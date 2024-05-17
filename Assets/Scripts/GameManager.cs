@@ -1,62 +1,43 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; //класс кнопок ui
 
 public class GameManager : MonoBehaviour
 {
-    public Deck deck; // Ссылка на объект Deck
-    public Transform[] cardPositions; // Массив для позиций карт на столе
+    // кнопки GameManager
+    public Button dealButton;
+    public Button hitButton;
+    public Button standButton;
+    public Button betButton;
+
+    //доступ скриптов к плеееру и дилеру 
+    public PlayerScript playerScript;
+    public PlayerScript dealerScript;
 
     void Start()
     {
-        if (deck == null)
-        {
-            Debug.LogError("Deck is not assigned in the GameManager.");
-            return;
-        }
+        //Добавление отлика по нажатию кнопок
+        dealButton.onClick.AddListener(() => DealClicked());
+        hitButton.onClick.AddListener(() => HitClicked());
+        standButton.onClick.AddListener(() => StandClicked());
 
-        if (cardPositions == null || cardPositions.Length == 0)
-        {
-            Debug.LogError("Card positions are not assigned in the GameManager.");
-            return;
-        }
-
-        SetupGame();
+        
     }
 
-    void SetupGame()
+    
+    private void DealClicked()
     {
-        DistributeCards();
+        playerScript.StartHand();
     }
 
-    void DistributeCards()
+    private void HitClicked()
     {
-        for (int i = 0; i < cardPositions.Length; i++)
-        {
-            if (cardPositions[i] == null)
-            {
-                Debug.LogError($"CardPosition{i + 1} is not assigned in the GameManager.");
-                continue;
-            }
-
-            Card drawnCard = deck.DrawCard();
-            if (drawnCard != null)
-            {
-                GameObject cardObject = new GameObject("Card");
-                cardObject.transform.position = cardPositions[i].position;
-
-                // Добавьте компонент SpriteRenderer и настройте спрайт карты
-                SpriteRenderer sr = cardObject.AddComponent<SpriteRenderer>();
-                sr.sprite = GetCardSprite(drawnCard);
-            }
-            else
-            {
-                Debug.LogError("Drawn card is null.");
-            }
-        }
+        
     }
 
-    Sprite GetCardSprite(Card card)
+    private void StandClicked()
     {
-        // Логика для получения спрайта карты на основе ее значения и масти
-        return null; // Здесь должна быть фактическая логика получения спрайта
+        
     }
 }

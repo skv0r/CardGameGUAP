@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "PokerGameGUAP.sln"
+    "dotnet.defaultSolution": "CardGameGUAP.sln",
+    "git.ignoreLimitWarning": true
 }
