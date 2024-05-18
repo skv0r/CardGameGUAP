@@ -11,7 +11,7 @@ public class DeckScript : MonoBehaviour
      
     void Start()
     {
-        
+        GetCardValues();
     }
 
     // Update is called once per frame

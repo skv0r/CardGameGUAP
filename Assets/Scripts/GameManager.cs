@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI; //класс кнопок ui
 
 public class GameManager : MonoBehaviour
@@ -28,7 +30,9 @@ public class GameManager : MonoBehaviour
     
     private void DealClicked()
     {
+        GameObject.Find("Deck").GetComponent<DeckScript>().Shuffle();
         playerScript.StartHand();
+        dealerScript.StartHand();
     }
 
     private void HitClicked()
