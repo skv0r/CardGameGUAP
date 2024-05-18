@@ -1,14 +1,14 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
 
 public class CardScript : MonoBehaviour
 {
-    // Значения карт, 2 пик = 2 итд
+    //Значения карт (буби,крести и тд)
     public int value = 0;
 
-    public int GetValueOfCard() 
+    public int GetValueOfCard()
     {
         return value;
     }
@@ -18,7 +18,7 @@ public class CardScript : MonoBehaviour
         value = newValue;
     }
 
-    public string GetSpriteName() 
+    public string GetSpriteName()
     {
         return GetComponent<SpriteRenderer>().sprite.name;
     }
@@ -30,9 +30,8 @@ public class CardScript : MonoBehaviour
 
     public void ResetCard()
     {
-        Sprite back = GameObject.Find("DeckController").GetComponent<DeckScript>().GetCardBack();
+        Sprite back = GameObject.Find("Deck").GetComponent<DeckScript>().GetCardBack();
         gameObject.GetComponent<SpriteRenderer>().sprite = back;
         value = 0;
     }
 }
-

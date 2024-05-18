@@ -3,8 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - cardLay
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -43,8 +42,8 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: Cards
-    uniqueID: 3694252339
+    uniqueID: 2190699715
     locked: 0
   - name: HUD
-    uniqueID: 4174830897
+    uniqueID: 1947087285
     locked: 0
