@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public Button hitBtn;
     public Button standBtn;
     public Button betBtn;
+    public Button restartBtn;
 
     private int standClicks = 0;
 
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
     public GameObject hideCard;
     // Ставка по умолчанию
     int pot = 0;
+    
 
     void Start()
     {
@@ -39,36 +41,60 @@ public class GameManager : MonoBehaviour
         hitBtn.onClick.AddListener(() => HitClicked());
         standBtn.onClick.AddListener(() => StandClicked());
         betBtn.onClick.AddListener(() => BetClicked());
+        //дефолтная настройка сцены при запуске
+        hitBtn.gameObject.SetActive(false);
+        standBtn.gameObject.SetActive(false);
+        betBtn.gameObject.SetActive(false);
+        restartBtn.gameObject.SetActive(false);
     }
 
     private void DealClicked()
-    {
-        
-        // Сброс раунда, скрывает временный текст, подготавливает руку
-        playerScript.ResetHand();
-        dealerScript.ResetHand();
-        // Скрывает счет руки на начало игры
-        dealerScoreText.gameObject.SetActive(false);
-        mainText.gameObject.SetActive(false);
-        dealerScoreText.gameObject.SetActive(false);
-        GameObject.Find("Deck").GetComponent<DeckScript>().Shuffle();
-        playerScript.StartHand();
-        dealerScript.StartHand();
-        // Обновление руки на табло
-        scoreText.text = "Hand: " + playerScript.handValue.ToString();
-        dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
-        // Раскрывает руку дилера (скрытую карту)
-        hideCard.GetComponent<Renderer>().enabled = true;
-        // Кнопки управления видимости
-        dealBtn.gameObject.SetActive(false);
-        hitBtn.gameObject.SetActive(true);
-        standBtn.gameObject.SetActive(true);
-        standBtnText.text = "Stand";
-        // Установка стандартной ставки
-        pot = 40;
-        betsText.text = "Bets: $" + pot.ToString();
-        playerScript.AdjustMoney(-20);
-        cashText.text = "$" + playerScript.GetMoney().ToString();
+    {   
+        //проверка на проигрыш в игре (0 денег)
+        if (playerScript.GetMoney() < 20)
+        {
+            restartBtn.gameObject.SetActive(true);
+            hitBtn.gameObject.SetActive(false);
+            standBtn.gameObject.SetActive(false);
+            betBtn.gameObject.SetActive(false);
+            dealBtn.gameObject.SetActive(false);
+            playerScript.ResetHand();
+            dealerScript.ResetHand();
+            cashText.text = "";
+            scoreText.text = "0$";
+            betsText.text = "";
+            dealerScoreText.text = "";  
+            mainText.text = "You lost. RETRY or EXIT";
+        } else 
+        {
+            // Сброс раунда, скрывает временный текст, подготавливает руку
+            playerScript.ResetHand();
+            dealerScript.ResetHand();
+            // Скрывает счет руки на начало игры
+            betBtn.gameObject.SetActive(true);
+            dealerScoreText.gameObject.SetActive(false);
+            mainText.gameObject.SetActive(false);
+            dealerScoreText.gameObject.SetActive(false);
+            GameObject.Find("Deck").GetComponent<DeckScript>().Shuffle();
+            playerScript.StartHand();
+            dealerScript.StartHand();
+            // Обновление руки на табло
+            scoreText.text = "Hand: " + playerScript.handValue.ToString();
+            dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
+            // Раскрывает руку дилера (скрытую карту)
+            hideCard.GetComponent<Renderer>().enabled = true;
+            // Кнопки управления видимости
+            dealBtn.gameObject.SetActive(false);
+            hitBtn.gameObject.SetActive(true);
+            standBtn.gameObject.SetActive(true);
+            standBtnText.text = "Stand";
+            // Установка стандартной ставки
+            pot = 40;
+            betsText.text = "Bets: $" + pot.ToString();
+            playerScript.AdjustMoney(-20);
+            cashText.text = "$" + playerScript.GetMoney().ToString();   
+        }
+
 
     }
 
@@ -104,6 +130,7 @@ public class GameManager : MonoBehaviour
     // Проверка победы/ поражения, перебор руки
     void RoundOver()
     {
+        mainText.gameObject.SetActive(true);
         // Булевые значения рук дилера и игрока (проверка на blackjack)
         bool playerBust = playerScript.handValue > 21;
         bool dealerBust = dealerScript.handValue > 21;
@@ -115,23 +142,27 @@ public class GameManager : MonoBehaviour
         // У обоих перебор, возврат ставок
         if (playerBust && dealerBust)
         {
+            
             mainText.text = "All Bust: Bets returned";
             playerScript.AdjustMoney(pot / 2);
         }
         // У игрока перебор, у дилера нет, или если дилер имеет руку больше, ПОБЕДА ДИЛЕРА
         else if (playerBust || (!dealerBust && dealerScript.handValue > playerScript.handValue))
         {
+            
             mainText.text = "Dealer wins!";
         }
         // перебор дилерра, у игрока нет, или если игрок имеет руку больше, ПОБЕДА ИГРОКА
         else if (dealerBust || playerScript.handValue > dealerScript.handValue)
         {
+            
             mainText.text = "You win!";
             playerScript.AdjustMoney(pot);
         }
         //Проверка на ничью, возврат ставок
         else if (playerScript.handValue == dealerScript.handValue)
         {
+  
             mainText.text = "Push: Bets returned";
             playerScript.AdjustMoney(pot / 2);
         }
@@ -156,11 +187,20 @@ public class GameManager : MonoBehaviour
     // Добавление денег ставки по нажатию
     void BetClicked()
     {
-        Text newBet = betBtn.GetComponentInChildren(typeof(Text)) as Text;
-        int intBet = int.Parse(newBet.text.ToString().Remove(0, 1));
-        playerScript.AdjustMoney(-intBet);
-        cashText.text = "$" + playerScript.GetMoney().ToString();
-        pot += (intBet * 2);
-        betsText.text = "Bets: $" + pot.ToString();
+        if (playerScript.GetMoney() < 20)
+        {
+            betBtn.gameObject.SetActive(false);
+            mainText.text = "No money";
+            mainText.gameObject.SetActive(true);
+        } else
+        {
+            Text newBet = betBtn.GetComponentInChildren(typeof(Text)) as Text;
+            int intBet = int.Parse(newBet.text.ToString().Remove(0, 1));
+            playerScript.AdjustMoney(-intBet);
+            cashText.text = "$" + playerScript.GetMoney().ToString();
+            pot += (intBet * 2);
+            betsText.text = "Bets: $" + pot.ToString(); 
+        }
+
     }
 }
