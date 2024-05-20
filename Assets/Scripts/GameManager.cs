@@ -130,6 +130,7 @@ public class GameManager : MonoBehaviour
     // Проверка победы/ поражения, перебор руки
     void RoundOver()
     {
+        betBtn.gameObject.SetActive(false);
         mainText.gameObject.SetActive(true);
         // Булевые значения рук дилера и игрока (проверка на blackjack)
         bool playerBust = playerScript.handValue > 21;
@@ -145,6 +146,7 @@ public class GameManager : MonoBehaviour
             
             mainText.text = "All Bust: Bets returned";
             playerScript.AdjustMoney(pot / 2);
+            
         }
         // У игрока перебор, у дилера нет, или если дилер имеет руку больше, ПОБЕДА ДИЛЕРА
         else if (playerBust || (!dealerBust && dealerScript.handValue > playerScript.handValue))
